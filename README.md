@@ -21,7 +21,7 @@ A sleek, real-time group chat application built with **Next.js**, **WebSockets**
 
 - **Frontend**: Next.js, React, Tailwind CSS  
 - **Backend**: WebSocket (custom Node.js server)  + Typescript
-- **Deployment**: Vercel (frontend), Node.js server (backend)
+- **Deployment**: Vercel (frontend), Render (backend)
 
 ---
 
