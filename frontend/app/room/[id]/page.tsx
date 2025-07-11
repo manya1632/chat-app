@@ -29,9 +29,9 @@ export default function RoomPage() {
   const params = useParams()
   const router = useRouter()
   const roomId = params.id as string
-  const [ws, setWs] = useState<WebSocket | null>(null)
+  const [_ws, setWs] = useState<WebSocket | null>(null)
   const [currentUser, setCurrentUser] = useState("")
-  const [currentUserEmoji, setCurrentUserEmoji] = useState("")
+  const [_currentUserEmoji, setCurrentUserEmoji] = useState("")
   const [message, setMessage] = useState("")
   const [messages, setMessages] = useState<Message[]>([])
   const [members, setMembers] = useState<Member[]>([])
@@ -39,10 +39,9 @@ export default function RoomPage() {
   const [showMembers, setShowMembers] = useState(false)
   const [connectionStatus, setConnectionStatus] = useState("Connecting...")
   const [actualRoomId, setActualRoomId] = useState(roomId)
-  const [reconnectAttempts, setReconnectAttempts] = useState(0)
+  const [_reconnectAttempts, setReconnectAttempts] = useState(0)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const wsRef = useRef<WebSocket | null>(null)
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const hasConnectedRef = useRef(false)
   const isLeavingRef = useRef(false)
 
