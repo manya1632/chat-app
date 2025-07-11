@@ -1,65 +1,57 @@
-'use client'
+"use client"
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 export default function HomePage() {
-  const [roomId, setRoomId] = useState('')
-  const [username, setUsername] = useState('')
-  const [error, setError] = useState('')
+  const [username, setUsername] = useState("")
+  const [roomId, setRoomId] = useState("")
+  const [error, setError] = useState("")
   const [isCreating, setIsCreating] = useState(false)
+  const [isJoining, setIsJoining] = useState(false)
   const router = useRouter()
-
-  const generateRoomId = () => {
-    return Math.random().toString(36).substring(2, 8).toUpperCase()
-  }
 
   const createRoom = () => {
     if (!username.trim()) {
-      setError('Please enter your name')
+      setError("Please enter your name")
       return
     }
-    
+
     setIsCreating(true)
-    const newRoomId = generateRoomId()
-    
-    // Store room data in localStorage
-    const roomData = {
-      id: newRoomId,
-      createdAt: new Date().toISOString(),
-      members: [],
-      messages: [],
-      memberHistory: []
-    }
-    
-    localStorage.setItem(`room_${newRoomId}`, JSON.stringify(roomData))
-    localStorage.setItem('currentUser', username)
-    
+    setError("")
+
+    // Store username for the room page
+    localStorage.setItem("username", username.trim())
+    localStorage.setItem("action", "create")
+
+    // Navigate directly to a temporary room page that will get the actual ID from WebSocket
     setTimeout(() => {
-      router.push(`/room/${newRoomId}`)
-    }, 1000)
+      router.push("/room/new")
+    }, 100)
   }
 
   const joinRoom = () => {
     if (!username.trim()) {
-      setError('Please enter your name')
+      setError("Please enter your name")
       return
     }
-    
+
     if (!roomId.trim()) {
-      setError('Please enter a room ID')
+      setError("Please enter a room ID")
       return
     }
 
-    const roomData = localStorage.getItem(`room_${roomId.toUpperCase()}`)
-    
-    if (!roomData) {
-      setError('This room ID does not exist')
-      return
-    }
+    setIsJoining(true)
+    setError("")
 
-    localStorage.setItem('currentUser', username)
-    router.push(`/room/${roomId.toUpperCase()}`)
+    // Store data for the room page
+    localStorage.setItem("username", username.trim())
+    localStorage.setItem("action", "join")
+    localStorage.setItem("targetRoomId", roomId.toUpperCase())
+
+    setTimeout(() => {
+      router.push(`/room/${roomId.toUpperCase()}`)
+    }, 100)
   }
 
   return (
@@ -78,17 +70,25 @@ export default function HomePage() {
               value={username}
               onChange={(e) => {
                 setUsername(e.target.value)
-                setError('')
+                setError("")
               }}
               placeholder="Enter your name"
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault()
+                  if (roomId.trim()) {
+                    joinRoom()
+                  } else {
+                    createRoom()
+                  }
+                }
+              }}
             />
           </div>
 
           {error && (
-            <div className="bg-red-900/50 border border-red-500 text-red-200 px-4 py-3 rounded-lg">
-              {error}
-            </div>
+            <div className="bg-red-900/50 border border-red-500 text-red-200 px-4 py-3 rounded-lg">{error}</div>
           )}
 
           <div className="space-y-4">
@@ -103,9 +103,7 @@ export default function HomePage() {
                   Creating Room...
                 </>
               ) : (
-                <>
-                  ✨ Create New Room
-                </>
+                <>✨ Create New Room</>
               )}
             </button>
 
@@ -124,16 +122,30 @@ export default function HomePage() {
                 value={roomId}
                 onChange={(e) => {
                   setRoomId(e.target.value.toUpperCase())
-                  setError('')
+                  setError("")
                 }}
                 placeholder="Enter Room ID"
                 className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent uppercase tracking-wider"
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    joinRoom()
+                  }
+                }}
               />
               <button
                 onClick={joinRoom}
-                className="w-full bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg font-medium transition-colors"
+                disabled={isJoining}
+                className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-800 disabled:cursor-not-allowed px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
               >
-                🚪 Join Room
+                {isJoining ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Joining Room...
+                  </>
+                ) : (
+                  <>🚪 Join Room</>
+                )}
               </button>
             </div>
           </div>
