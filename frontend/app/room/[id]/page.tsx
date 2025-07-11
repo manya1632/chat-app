@@ -216,7 +216,7 @@ export default function RoomPage() {
       //   }
       // }
     } catch (error) {
-      // console.error("Failed to create WebSocket connection:", error)
+      console.error("Failed to create WebSocket connection:", error)
       // setConnectionStatus("Failed to connect")
     }
   }
