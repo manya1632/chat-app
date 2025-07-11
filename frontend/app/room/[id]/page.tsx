@@ -85,7 +85,7 @@ export default function RoomPage() {
 
     try {
       console.log("Attempting to connect to WebSocket server...")
-      const websocket = new WebSocket("ws://localhost:8080")
+      const websocket = new WebSocket(process.env.NEXT_PUBLIC_WS_URL!)
       wsRef.current = websocket
       setWs(websocket)
 
