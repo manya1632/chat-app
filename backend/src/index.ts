@@ -85,12 +85,12 @@ function updateRoomMembers(roomId: string){
 //whenever there is a new connection - to the websocket sever
 wss.on("connection", (socket : WebSocket)=> {
     userCount++;
-    console.log("User connected #",userCount);
+    // console.log("User connected #",userCount);
 
     socket.on("message", (msg : string) => {
         try{
             const parsedMessage = JSON.parse(msg);
-            console.log("Received message: ",parsedMessage);
+            // console.log("Received message: ",parsedMessage);
 
             switch(parsedMessage.type){
                 case "createRoom" : {
@@ -137,7 +137,7 @@ wss.on("connection", (socket : WebSocket)=> {
                         })
                     )
 
-                    console.log(`User ${name} created room ${roomId}`);
+                    // console.log(`User ${name} created room ${roomId}`);
                     break;
                 }
 
@@ -197,7 +197,7 @@ wss.on("connection", (socket : WebSocket)=> {
                         }
                     }, socket)
 
-                    console.log(`User ${name} joined room ${roomId}`);
+                    // console.log(`User ${name} joined room ${roomId}`);
                     break;
                 }
 
@@ -225,7 +225,7 @@ wss.on("connection", (socket : WebSocket)=> {
                         payload : chatMessage
                     })
 
-                    console.log(`Message from ${currUser.name} in room ${currUser.room}: ${message}`);
+                    // console.log(`Message from ${currUser.name} in room ${currUser.room}: ${message}`);
                     break;
                 }
 
@@ -254,7 +254,7 @@ wss.on("connection", (socket : WebSocket)=> {
                             }
                         })
 
-                        console.log(`User ${currUser.name} left room ${currUser.room}`);
+                        // console.log(`User ${currUser.name} left room ${currUser.room}`);
                         break;
                     }
                 }
@@ -289,11 +289,11 @@ wss.on("connection", (socket : WebSocket)=> {
                     }
                 })
                 
-                console.log(`User ${currUser.name} disconnected from room ${currUser.room}`);
+                // console.log(`User ${currUser.name} disconnected from room ${currUser.room}`);
         }
 
         userCount--;
-        console.log("User disconnected. Total users:", userCount);
+        // console.log("User disconnected. Total users:", userCount);
     })
 })
 

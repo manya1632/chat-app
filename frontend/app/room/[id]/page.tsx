@@ -80,17 +80,17 @@ export default function RoomPage() {
     }
 
     try {
-      console.log("Attempting to connect to WebSocket server...")
+      // console.log("Attempting to connect to WebSocket server...")
       const websocket = new WebSocket(process.env.NEXT_PUBLIC_WS_URL!)
       wsRef.current = websocket
 
       websocket.onopen = () => {
         setConnectionStatus("Connected")
         hasConnectedRef.current = true
-        console.log("Connected to WebSocket server")
+        // console.log("Connected to WebSocket server")
 
         if (action === "create" || roomId === "new") {
-          console.log("Sending createRoom message")
+          // console.log("Sending createRoom message")
           websocket.send(
             JSON.stringify({
               type: "createRoom",
@@ -99,7 +99,7 @@ export default function RoomPage() {
           )
         } else if (action === "join") {
           const targetRoomId = localStorage.getItem("targetRoomId") || roomId
-          console.log("Sending joinRoom message for room:", targetRoomId)
+          // console.log("Sending joinRoom message for room:", targetRoomId)
           websocket.send(
             JSON.stringify({
               type: "joinRoom",
@@ -112,7 +112,7 @@ export default function RoomPage() {
       websocket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data)
-          console.log("Received:", data)
+          // console.log("Received:", data)
 
           switch (data.type) {
             case "roomCreated":
@@ -173,7 +173,7 @@ export default function RoomPage() {
               break
 
             case "error":
-              console.error("Server error:", data.payload.message)
+              // console.error("Server error:", data.payload.message)
               setConnectionStatus("Error: " + data.payload.message)
               setTimeout(() => {
                 router.push("/")
@@ -250,15 +250,15 @@ export default function RoomPage() {
 
   const sendMessage = () => {
     if (!message.trim() || !wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-      console.log("Cannot send message:", {
-        messageEmpty: !message.trim(),
-        wsNull: !wsRef.current,
-        wsNotOpen: wsRef.current?.readyState !== WebSocket.OPEN,
-      })
+      // console.log("Cannot send message:", {
+      //   messageEmpty: !message.trim(),
+      //   wsNull: !wsRef.current,
+      //   wsNotOpen: wsRef.current?.readyState !== WebSocket.OPEN,
+      // })
       return
     }
 
-    console.log("Sending message:", message.trim())
+    // console.log("Sending message:", message.trim())
 
     try {
       wsRef.current.send(
@@ -274,7 +274,7 @@ export default function RoomPage() {
   }
 
   const leaveRoom = () => {
-    console.log("User manually leaving room")
+    // console.log("User manually leaving room")
     isLeavingRef.current = true
 
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
