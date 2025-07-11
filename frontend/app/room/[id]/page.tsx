@@ -342,7 +342,7 @@ export default function RoomPage() {
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col">
       {/* Header */}
-      <div className="bg-gray-800 border-b border-gray-700 p-4">
+      <div className="bg-gray-800 border-b border-gray-700 p-4 sticky top-0 z-50 ">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <h1 className="text-xl font-bold">Room {actualRoomId}</h1>
@@ -421,7 +421,7 @@ export default function RoomPage() {
         {/* Chat Area */}
         <div className="flex-1 flex flex-col">
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 mb-20">
             {connectionStatus === "Connected" && messages.length === 0 && (
               <div className="text-center text-gray-400 py-8">
                 <div className="text-4xl mb-2">💬</div>
@@ -473,36 +473,59 @@ export default function RoomPage() {
           </div>
 
           {/* Message Input */}
-          <div className="border-t border-gray-700 p-4">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault()
-                    sendMessage()
-                  }
-                }}
-                placeholder={connectionStatus === "Connected" ? "Type your message..." : "Connecting to server..."}
-                disabled={connectionStatus !== "Connected"}
-                className="flex-1 px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
-              />
-              <button
-                onClick={sendMessage}
-                disabled={!message.trim() || connectionStatus !== "Connected"}
-                className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed px-6 py-3 rounded-lg font-medium transition-colors"
-              >
-                Send
-              </button>
-            </div>
-            {connectionStatus !== "Connected" && (
-              <div className="text-xs text-gray-400 mt-2">
-                {connectionStatus === "Connecting..." ? "Connecting to server..." : connectionStatus}
-              </div>
-            )}
-          </div>
+          <div
+  className="
+    fixed bottom-0 left-0 right-0 w-full
+    border-t border-gray-700 bg-gray-800
+    p-4 z-50
+  "
+>
+  <div className="flex gap-2">
+    <input
+      type="text"
+      value={message}
+      onChange={(e) => setMessage(e.target.value)}
+      onKeyPress={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault()
+          sendMessage()
+        }
+      }}
+      placeholder={
+        connectionStatus === "Connected"
+          ? "Type your message..."
+          : "Connecting to server..."
+      }
+      disabled={connectionStatus !== "Connected"}
+      className="
+        flex-1 px-4 py-3 bg-gray-700 border border-gray-600
+        rounded-lg focus:outline-none focus:ring-2
+        focus:ring-blue-500 focus:border-transparent
+        disabled:opacity-50
+      "
+    />
+    <button
+      onClick={sendMessage}
+      disabled={!message.trim() || connectionStatus !== "Connected"}
+      className="
+        bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600
+        disabled:cursor-not-allowed px-6 py-3 rounded-lg
+        font-medium transition-colors
+      "
+    >
+      Send
+    </button>
+  </div>
+
+  {connectionStatus !== "Connected" && (
+    <div className="text-xs text-gray-400 mt-2">
+      {connectionStatus === "Connecting..."
+        ? "Connecting to server..."
+        : connectionStatus}
+    </div>
+  )}
+</div>
+
         </div>
       </div>
     </div>
