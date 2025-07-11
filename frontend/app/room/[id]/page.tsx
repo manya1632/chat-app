@@ -29,9 +29,7 @@ export default function RoomPage() {
   const params = useParams()
   const router = useRouter()
   const roomId = params.id as string
-  const [_ws, setWs] = useState<WebSocket | null>(null)
   const [currentUser, setCurrentUser] = useState("")
-  const [_currentUserEmoji, setCurrentUserEmoji] = useState("")
   const [message, setMessage] = useState("")
   const [messages, setMessages] = useState<Message[]>([])
   const [members, setMembers] = useState<Member[]>([])
@@ -39,7 +37,6 @@ export default function RoomPage() {
   const [showMembers, setShowMembers] = useState(false)
   const [connectionStatus, setConnectionStatus] = useState("Connecting...")
   const [actualRoomId, setActualRoomId] = useState(roomId)
-  const [_reconnectAttempts, setReconnectAttempts] = useState(0)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const wsRef = useRef<WebSocket | null>(null)
   const hasConnectedRef = useRef(false)
@@ -86,11 +83,9 @@ export default function RoomPage() {
       console.log("Attempting to connect to WebSocket server...")
       const websocket = new WebSocket(process.env.NEXT_PUBLIC_WS_URL!)
       wsRef.current = websocket
-      setWs(websocket)
 
       websocket.onopen = () => {
         setConnectionStatus("Connected")
-        setReconnectAttempts(0)
         hasConnectedRef.current = true
         console.log("Connected to WebSocket server")
 
@@ -122,7 +117,6 @@ export default function RoomPage() {
           switch (data.type) {
             case "roomCreated":
               setActualRoomId(data.payload.roomId)
-              setCurrentUserEmoji(data.payload.emoji)
               setMessages(data.payload.room.messages || [])
               setMembers(data.payload.room.members || [])
               setMemberHistory(data.payload.room.memberHistory || [])
@@ -132,7 +126,6 @@ export default function RoomPage() {
 
             case "roomJoined":
               setActualRoomId(data.payload.roomId)
-              setCurrentUserEmoji(data.payload.emoji)
               setMessages(data.payload.room.messages || [])
               setMembers(data.payload.room.members || [])
               setMemberHistory(data.payload.room.memberHistory || [])
@@ -206,7 +199,6 @@ export default function RoomPage() {
           //   setConnectionStatus(`Reconnecting... (${reconnectAttempts + 1}/5)`)
           //   reconnectTimeoutRef.current = setTimeout(
           //     () => {
-          //       setReconnectAttempts((prev) => prev + 1)
           //       connectWebSocket()
           //     },
           //     2000 * (reconnectAttempts + 1),
@@ -254,7 +246,7 @@ export default function RoomPage() {
       // localStorage.removeItem("action")
       // localStorage.removeItem("targetRoomId")
     }
-  }, [])
+  })
 
   const sendMessage = () => {
     if (!message.trim() || !wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
@@ -293,7 +285,6 @@ export default function RoomPage() {
   }
 
   const retryConnection = () => {
-    setReconnectAttempts(0)
     setConnectionStatus("Connecting...")
     hasConnectedRef.current = false
     isLeavingRef.current = false
