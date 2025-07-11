@@ -246,7 +246,7 @@ export default function RoomPage() {
       // localStorage.removeItem("action")
       // localStorage.removeItem("targetRoomId")
     }
-  })
+  }, [])
 
   const sendMessage = () => {
     if (!message.trim() || !wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
